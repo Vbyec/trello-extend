@@ -1,5 +1,6 @@
 (function () {
   const lastColumnsSummary = {};
+  const selectedByColumns = {};
   let calculateCustomFieldsFixedTo = 2;
   let intervalId, timeInterval;
 
@@ -52,7 +53,7 @@
 
   function calculateCustomFieldsForColumn(columnNode) {
     const result = {};
-    const columnName = columnNode.querySelector('.list-header-name-assist').textContent;
+    const columnName = getColumnName(columnNode);
     columnNode
       .querySelectorAll('.js-custom-field-badges .badge-text')
       .forEach(item => {
@@ -70,7 +71,7 @@
 
     if (lastColumnsSummary[columnName] !== JSON.stringify(result)) {
       lastColumnsSummary[columnName] = JSON.stringify(result);
-      drawSummary(columnNode, result);
+      redraw(columnNode, JSON.parse(lastColumnsSummary[getColumnName(columnNode)]));
     }
   }
 
@@ -84,18 +85,29 @@
       .reduce((a, b) => a + b, 0);
   }
 
-  function drawSummary(node, result) {
-    let summaryBlock = getSummaryBlock(node);
+  function redraw(columnNode, result) {
+    const selectedKeys = getSelectedForColumn(columnNode);
+    const filteredSelectedKeys = Object.keys(result).filter(n => selectedKeys.indexOf(n) !== -1);
+    setSelectedForColumn(columnNode, filteredSelectedKeys);
+
+    drawSummary(columnNode, result);
+    clearFiltered(columnNode);
+    filterColumnByCF(columnNode);
+  }
+
+  function drawSummary(columnNode, result) {
+    let summaryBlock = getSummaryBlock(columnNode);
     if (!summaryBlock) {
-      addSummaryBlock(node);
-      summaryBlock = getSummaryBlock(node)
+      addSummaryBlock(columnNode);
+      summaryBlock = getSummaryBlock(columnNode)
     } else {
       clearBlock(summaryBlock);
     }
 
     for (let key in sortObjectByKey(result)) {
       if (result.hasOwnProperty(key)) {
-        addSummaryItem(summaryBlock, key, result[key])
+        const item = addSummaryItem(columnNode, summaryBlock, key, result[key]);
+        item.onclick = () => onSummaryItemClick(item, columnNode, key);
       }
     }
   }
@@ -106,28 +118,63 @@
 
   function addSummaryBlock(node) {
     const div = document.createElement('div');
+    const referenceNode = node.querySelector('.list-header');
     div.className = 'summary-block js-summary-block';
-    node
-      .querySelector('.list-header')
-      .appendChild(div)
+
+    referenceNode.parentNode.insertBefore(div, referenceNode.nextSibling);
   }
 
   function removeSummaryBlock(node) {
-    const summaryBlock = node.querySelector('.summary-block.js-summary-block');
+    const summaryBlock = getSummaryBlock(node);
     if (summaryBlock) {
-      summaryBlock.remove();
+      clearBlock(summaryBlock);
     }
   }
 
   function getSummaryBlock(node) {
-    return node.querySelectorAll('.list-header .js-summary-block')[0];
+    return node.querySelector('.js-summary-block');
   }
 
-  function addSummaryItem(node, key, value) {
+  function addSummaryItem(columnNode, node, key, value) {
     const item = document.createElement('div');
     item.className = 'summary-item';
+    item.classList.toggle('summary-item--selected', getSelectedForColumn(columnNode).indexOf(key) !== -1)
     item.innerHTML = `<span>${key}:</span> <strong>${+value.toFixed(calculateCustomFieldsFixedTo)}</strong>`;
     node.appendChild(item);
+    return item;
+  }
+
+  function onSummaryItemClick(node, columnNode, key) {
+    const selectedKeys = getSelectedForColumn(columnNode);
+    const clickedKeyIndex = selectedKeys.indexOf(key);
+    if (clickedKeyIndex !== -1) {
+      selectedKeys.splice(clickedKeyIndex, 1);
+    } else {
+      selectedKeys.push(key);
+    }
+    setSelectedForColumn(columnNode, selectedKeys);
+    redraw(columnNode, JSON.parse(lastColumnsSummary[getColumnName(columnNode)]));
+  }
+
+  function clearFiltered(columnNode) {
+    columnNode
+      .querySelectorAll('.list-card')
+      .forEach(card => card.classList.remove('js-custom-filed--hide'))
+  }
+
+  function filterColumnByCF(columnNode) {
+    const cfNames = getSelectedForColumn(columnNode);
+    if (cfNames.length === 0) {
+      return;
+    }
+    columnNode
+      .querySelectorAll('.list-card')
+      .forEach(card => {
+        const keys = [];
+        card.querySelectorAll('.js-custom-field-badges .badge-text')
+          .forEach(customFieldTag => keys.push(customFieldTag.innerText.split(':')[0]));
+        card.classList.toggle('js-custom-filed--hide', cfNames.filter(n => keys.indexOf(n) !== -1).length === 0);
+      });
   }
 
   function sortObjectByKey(object) {
@@ -136,5 +183,25 @@
       .reduce((acc, key) => ({
         ...acc, [key]: object[key]
       }), {});
+  }
+
+  function getColumnName(columnNode) {
+    return columnNode.querySelector('.list-header-name-assist').textContent;
+  }
+
+  function getSelectedForColumn(columnNode) {
+    if (!selectedByColumns.hasOwnProperty(getColumnName(columnNode))) {
+      selectedByColumns[getColumnName(columnNode)] = [];
+    }
+
+    return selectedByColumns[getColumnName(columnNode)];
+  }
+
+  function setSelectedForColumn(columnNode, selected) {
+    if (!selectedByColumns.hasOwnProperty(getColumnName(columnNode))) {
+      selectedByColumns[getColumnName(columnNode)] = [];
+    }
+
+    selectedByColumns[getColumnName(columnNode)] = selected;
   }
 })();

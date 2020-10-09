@@ -1,10 +1,22 @@
 .summary-item {
     display: flex;
     justify-content: space-between;
+    border-radius: 3px;
+    padding: 1px 5px;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+.summary-item--selected {
+    border: 1px solid #5AAC44;
+    padding: 0 4px;
 }
 
 .summary-block {
-    width: 100%;
     color: #5E6C84;
-    margin: 5px 8px 0 8px;
+    padding: 0 10px 10px 10px;
+}
+
+.js-custom-filed--hide.list-card {
+    display: none;
 }
