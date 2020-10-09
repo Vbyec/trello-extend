@@ -1,0 +1,15 @@
+.page-actions {
+    width: 300px;
+    padding: 15px;
+}
+
+.page-actions__switch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.page-actions__switch .switch {
+    margin-left: 10px;
+}

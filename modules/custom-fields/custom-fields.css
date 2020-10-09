@@ -1,0 +1,10 @@
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+}
+
+.summary-block {
+    width: 100%;
+    color: #5E6C84;
+    margin: 5px 8px 0 8px;
+}
