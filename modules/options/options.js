@@ -8,7 +8,6 @@ const hideEmptyColumnsCheckbox = document.getElementById('hide_empty_columns');
 const hideEmptyColumnsInterval = document.getElementById('hide_empty_columns_interval');
 
 const calculateCustomFieldsSummCheckbox = document.getElementById('calculate_custom_fields_summ');
-const calculateCustomFieldsInterval = document.getElementById('calculate_custom_fields_interval');
 const calculateCustomFieldsFixedTo = document.getElementById('calculate_custom_fields_fixed_to');
 const optionForm = document.getElementById('options-form');
 
@@ -17,14 +16,12 @@ chrome.storage.sync.get({
   hideEmptyColumnsInterval: 1,
 
   calculateCustomFieldsSumm: true,
-  calculateCustomFieldsInterval: 1,
   calculateCustomFieldsFixedTo: 2,
 }, function (result) {
   hideEmptyColumnsCheckbox.checked = result.hideEmptyColumns;
   hideEmptyColumnsInterval.value = result.hideEmptyColumnsInterval;
 
   calculateCustomFieldsSummCheckbox.checked = result.calculateCustomFieldsSumm;
-  calculateCustomFieldsInterval.value = result.calculateCustomFieldsInterval;
   calculateCustomFieldsFixedTo.value = result.calculateCustomFieldsFixedTo;
 });
 
@@ -34,7 +31,6 @@ optionForm.addEventListener('submit', () => {
     hideEmptyColumnsInterval: hideEmptyColumnsInterval.value,
 
     calculateCustomFieldsSumm: calculateCustomFieldsSummCheckbox.checked,
-    calculateCustomFieldsInterval: calculateCustomFieldsInterval.value,
     calculateCustomFieldsFixedTo: calculateCustomFieldsFixedTo.value,
   });
 });

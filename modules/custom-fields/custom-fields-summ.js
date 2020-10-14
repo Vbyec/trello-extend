@@ -2,12 +2,11 @@
   const lastColumnsSummary = {};
   const selectedByColumns = {};
   let calculateCustomFieldsFixedTo = 2;
-  let intervalId, timeInterval;
+  const boardObserver = new MutationObserver(onBoardMutate);
 
-  chrome.storage.sync.get({ calculateCustomFieldsSumm: true, calculateCustomFieldsInterval: 1, calculateCustomFieldsFixedTo: 2 }, function (result) {
+  chrome.storage.sync.get({ calculateCustomFieldsSumm: true, calculateCustomFieldsFixedTo: 2 }, function (result) {
     if (result.calculateCustomFieldsSumm) {
       calculateCustomFieldsFixedTo = result.calculateCustomFieldsFixedTo;
-      timeInterval = result.calculateCustomFieldsInterval;
       start();
     }
   });
@@ -24,14 +23,46 @@
 
   function start() {
     calculateColumnsCustomFieldsSum();
-    intervalId = setInterval(calculateColumnsCustomFieldsSum, timeInterval * 1000);
+
+    afterContentCreated()
+      .then(content => {
+        boardObserver.observe(content, {
+          childList: true,
+          subtree: true,
+        });
+      });
+  }
+
+  function onBoardMutate(mutations) {
+    if (mutations.filter(mutation => mutation.type === 'childList' && mutation.addedNodes.length && mutation.target.classList.contains('js-custom-field-badges')).length > 0) {
+      calculateColumnsCustomFieldsSum();
+    }
+  }
+
+  function afterContentCreated() {
+    return new Promise(resolve => {
+      if (document.getElementById('content')) {
+        resolve(document.getElementById('content'));
+      } else {
+        const observer = new MutationObserver(function (mutations) {
+          mutations.forEach(mutation => {
+            if (mutation.type === 'childList' && Array.isArray(mutation.addedNodes) && mutation.addedNodes.find(node => node.id === 'content')) {
+              resolve(document.getElementById('content'));
+              observer.disconnect()
+            }
+          })
+        });
+        observer.observe(document, {
+          childList: true,
+          subtree: true,
+        });
+      }
+    });
   }
 
   function stop() {
-    if (intervalId) {
-      clearInterval(intervalId);
-      clear();
-    }
+    boardObserver.disconnect();
+    clear();
   }
 
   function clear() {
@@ -139,7 +170,7 @@
   function addSummaryItem(columnNode, node, key, value) {
     const item = document.createElement('div');
     item.className = 'summary-item';
-    item.classList.toggle('summary-item--selected', getSelectedForColumn(columnNode).indexOf(key) !== -1)
+    item.classList.toggle('summary-item--selected', getSelectedForColumn(columnNode).indexOf(key) !== -1);
     item.innerHTML = `<span>${key}:</span> <strong>${+value.toFixed(calculateCustomFieldsFixedTo)}</strong>`;
     node.appendChild(item);
     return item;
