@@ -82,6 +82,7 @@
       .split('+')
       .map(parseFloat)
       .filter(item => !isNaN(item))
+      .slice(0, 1)
       .reduce((a, b) => a + b, 0);
   }
 
