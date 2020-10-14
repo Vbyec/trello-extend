@@ -24,7 +24,7 @@
   function start() {
     calculateColumnsCustomFieldsSum();
 
-    afterContentCreated()
+    afterBoardLoaded()
       .then(content => {
         boardObserver.observe(content, {
           childList: true,
@@ -39,15 +39,15 @@
     }
   }
 
-  function afterContentCreated() {
+  function afterBoardLoaded() {
     return new Promise(resolve => {
-      if (document.getElementById('content')) {
-        resolve(document.getElementById('content'));
+      if (document.querySelector('board-wrapper')) {
+        resolve(document.querySelector('board-wrapper'));
       } else {
         const observer = new MutationObserver(function (mutations) {
           mutations.forEach(mutation => {
-            if (mutation.type === 'childList' && Array.isArray(mutation.addedNodes) && mutation.addedNodes.find(node => node.id === 'content')) {
-              resolve(document.getElementById('content'));
+            if (doesMutationAddNodeWithClass(mutation, 'board-wrapper')) {
+              resolve(Array.from(mutation.addedNodes).find(node => node.nodeType === Node.ELEMENT_NODE && node.className === 'board-wrapper'));
               observer.disconnect()
             }
           })
@@ -76,6 +76,10 @@
         delete lastColumnsSummary[key]
       }
     }
+  }
+
+  function doesMutationAddNodeWithClass(mutation, className) {
+    return mutation.type === 'childList' && mutation.addedNodes.length && Array.from(mutation.addedNodes).find(node => node.nodeType === Node.ELEMENT_NODE && node.className === className)
   }
 
   function calculateColumnsCustomFieldsSum() {

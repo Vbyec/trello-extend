@@ -9,6 +9,9 @@ const hideEmptyColumnsInterval = document.getElementById('hide_empty_columns_int
 
 const calculateCustomFieldsSummCheckbox = document.getElementById('calculate_custom_fields_summ');
 const calculateCustomFieldsFixedTo = document.getElementById('calculate_custom_fields_fixed_to');
+
+const showCardCountCheckbox = document.getElementById('show_card_count');
+
 const optionForm = document.getElementById('options-form');
 
 chrome.storage.sync.get({
@@ -17,12 +20,16 @@ chrome.storage.sync.get({
 
   calculateCustomFieldsSumm: true,
   calculateCustomFieldsFixedTo: 2,
+
+  showCardCount: true
 }, function (result) {
   hideEmptyColumnsCheckbox.checked = result.hideEmptyColumns;
   hideEmptyColumnsInterval.value = result.hideEmptyColumnsInterval;
 
   calculateCustomFieldsSummCheckbox.checked = result.calculateCustomFieldsSumm;
   calculateCustomFieldsFixedTo.value = result.calculateCustomFieldsFixedTo;
+
+  showCardCountCheckbox.checked = result.showCardCount;
 });
 
 optionForm.addEventListener('submit', () => {
@@ -32,5 +39,7 @@ optionForm.addEventListener('submit', () => {
 
     calculateCustomFieldsSumm: calculateCustomFieldsSummCheckbox.checked,
     calculateCustomFieldsFixedTo: calculateCustomFieldsFixedTo.value,
+
+    showCardCount: showCardCountCheckbox.checked,
   });
 });
