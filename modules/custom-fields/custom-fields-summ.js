@@ -41,8 +41,8 @@
 
   function afterBoardLoaded() {
     return new Promise(resolve => {
-      if (document.querySelector('board-wrapper')) {
-        resolve(document.querySelector('board-wrapper'));
+      if (document.querySelector('.board-wrapper')) {
+        resolve(document.querySelector('.board-wrapper'));
       } else {
         const observer = new MutationObserver(function (mutations) {
           mutations.forEach(mutation => {

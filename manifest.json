@@ -1,6 +1,6 @@
 {
   "name": "Trello extend",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Добавляет функционал в trello и упрощает работу с ним",
   "manifest_version": 2,
   "options_page": "modules/options/options.html",
@@ -12,7 +12,8 @@
       "js": [
         "/modules/hide-empty-columns/hide-empty-columns.js",
         "/modules/custom-fields/custom-fields-summ.js",
-        "/modules/show-card-count/show-card-count.js"
+        "/modules/show-card-count/show-card-count.js",
+        "/modules/numerate-checklist/numerate-checklist.js"
       ],
       "css": [
         "/modules/custom-fields/custom-fields.css"
