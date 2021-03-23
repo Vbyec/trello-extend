@@ -1,0 +1,16 @@
+.window {
+    width: auto !important;
+    margin: 50px !important;
+}
+
+.window-main-col {
+    width: calc(100% - 250px) !important;
+}
+
+.js-attachment-list {
+    display: flex;
+}
+
+.attachment-thumbnail {
+    max-width: 500px;
+}
