@@ -1,16 +1,17 @@
-.window {
+body.full-width-card .window {
     width: 100% !important;
     margin: 50px !important;
 }
 
-.window-main-col {
+body.full-width-card .window-main-col {
     width: calc(100% - 250px) !important;
 }
 
-.js-attachment-list {
+body.full-width-card .js-attachment-list {
     display: flex;
+    flex-wrap: wrap;
 }
 
-.attachment-thumbnail {
-    max-width: 500px;
+body.full-width-card .attachment-thumbnail {
+    width: 500px;
 }
