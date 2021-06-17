@@ -1,6 +1,6 @@
 {
   "name": "Trello extend",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Добавляет функционал в trello и упрощает работу с ним",
   "manifest_version": 2,
   "options_page": "modules/options/options.html",

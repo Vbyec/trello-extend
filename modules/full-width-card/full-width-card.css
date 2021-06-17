@@ -15,3 +15,8 @@ body.full-width-card .js-attachment-list {
 body.full-width-card .attachment-thumbnail {
     width: 500px;
 }
+
+
+body.full-width-card .window-sidebar {
+    width: 200px;
+}
